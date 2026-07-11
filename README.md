@@ -2,6 +2,8 @@
 
 PWA personal para monitorear PRs de GitHub y tickets de Jira desde un solo lugar.
 
+![Dev Dashboard](resources/Screenshot_20260710_190200.png)
+
 ## Requisitos
 
 - Python 3 (para servir localmente)
