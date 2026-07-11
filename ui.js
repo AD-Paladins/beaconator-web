@@ -6,6 +6,7 @@ import { t } from './i18n.js';
 import { showLoading, showError, showEmpty } from './ui-utils.js';
 import { exportSelected, parseImportFile, getImportPreview, applyImport, collectCategories } from './ui-crypto.js';
 import { requestPermission, notifyReviewNeeded, getPendingCount, markAllSeen, getPermission } from './notifications.js';
+import { THEMES, getTheme, setTheme } from './themes.js';
 
 // ---- Utils ----
 

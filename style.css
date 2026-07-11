@@ -14,6 +14,117 @@
   font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
+/* Theme: Light */
+[data-theme="light"] {
+  --bg: #f5f5f7;
+  --panel: #ffffff;
+  --panel-alt: #f0f0f2;
+  --border: #d2d2d7;
+  --text: #1d1d1f;
+  --text-dim: #6e6e73;
+  --accent-pr: #4A7ADB;
+  --accent-jira: #2D9F4F;
+  --accent-watch: #D4940A;
+  --accent-metrics: #8B6FD4;
+  --danger: #D43A32;
+}
+
+/* Theme: High Contrast Light */
+[data-theme="hc-light"] {
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --panel-alt: #f0f0f0;
+  --border: #000000;
+  --text: #000000;
+  --text-dim: #333333;
+  --accent-pr: #0000CC;
+  --accent-jira: #006600;
+  --accent-watch: #CC6600;
+  --accent-metrics: #660099;
+  --danger: #CC0000;
+  --radius: 4px;
+}
+
+[data-theme="hc-light"] .card,
+[data-theme="hc-light"] .badge,
+[data-theme="hc-light"] .metric-card,
+[data-theme="hc-light"] .modal,
+[data-theme="hc-light"] .error-state {
+  border-width: 2px;
+}
+
+/* Theme: High Contrast Dark */
+[data-theme="hc-dark"] {
+  --bg: #000000;
+  --panel: #0a0a0a;
+  --panel-alt: #141414;
+  --border: #ffffff;
+  --text: #ffffff;
+  --text-dim: #cccccc;
+  --accent-pr: #6DA5FF;
+  --accent-jira: #5EE88A;
+  --accent-watch: #FFB84D;
+  --accent-metrics: #C4A8FF;
+  --danger: #FF6B63;
+  --radius: 4px;
+}
+
+[data-theme="hc-dark"] .card,
+[data-theme="hc-dark"] .badge,
+[data-theme="hc-dark"] .metric-card,
+[data-theme="hc-dark"] .modal,
+[data-theme="hc-dark"] .error-state {
+  border-width: 2px;
+}
+
+/* Theme: Gaming */
+[data-theme="gaming"] {
+  --bg: #12082A;
+  --panel: #1A0F3C;
+  --panel-alt: #241652;
+  --border: #3D2A6E;
+  --text: #EAE6FF;
+  --text-dim: #9B8EC4;
+  --accent-pr: #7B68EE;
+  --accent-jira: #FFD93D;
+  --accent-watch: #FF6B9D;
+  --accent-metrics: #C77DFF;
+  --danger: #FF4757;
+}
+
+[data-theme="gaming"] .badge-ci-success { background: rgba(255,217,61,0.15); color: var(--accent-jira); }
+[data-theme="gaming"] .badge-status-done { background: rgba(255,217,61,0.15); color: var(--accent-jira); }
+
+/* Theme: Lilac */
+[data-theme="lilac"] {
+  --bg: #f3f0f7;
+  --panel: #ffffff;
+  --panel-alt: #ede8f5;
+  --border: #d4cce3;
+  --text: #2d2640;
+  --text-dim: #7a6f96;
+  --accent-pr: #7C6CB0;
+  --accent-jira: #5AAF7C;
+  --accent-watch: #D4945A;
+  --accent-metrics: #9B7FCF;
+  --danger: #C75C5C;
+}
+
+/* Theme: Pink */
+[data-theme="pink"] {
+  --bg: #fdf2f4;
+  --panel: #ffffff;
+  --panel-alt: #fce8ec;
+  --border: #e8c4cc;
+  --text: #3d2028;
+  --text-dim: #9a6b76;
+  --accent-pr: #C4607A;
+  --accent-jira: #5AAF7C;
+  --accent-watch: #D4945A;
+  --accent-metrics: #B07CB0;
+  --danger: #C75C5C;
+}
+
 * { box-sizing: border-box; }
 
 body {
@@ -421,6 +532,7 @@ main {
   overflow: hidden;
   z-index: 50;
 }
+#theme-dropdown { min-width: 160px; }
 .lang-dropdown.open {
   display: block;
 }

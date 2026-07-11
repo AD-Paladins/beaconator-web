@@ -130,5 +130,13 @@
   "help.watchlist.prs": "Pin specific PRs to your watchlist. Use 'Browse PRs' to find and pin them, or 'View watched PRs' to see and unpin. Watched PRs show CI status and approval badges.",
   "help.io.title": "Import / Export",
   "help.io.export": "Export your settings to a JSON file. You can select which categories to include and optionally encrypt with a password.",
-  "help.io.import": "Import settings from a file. You'll see a preview of what will change before applying. Select which categories to import to avoid overwriting existing data."
+  "help.io.import": "Import settings from a file. You'll see a preview of what will change before applying. Select which categories to import to avoid overwriting existing data.",
+
+  "theme.dark": "Dark",
+  "theme.light": "Light",
+  "theme.hcLight": "High Contrast Light",
+  "theme.hcDark": "High Contrast Dark",
+  "theme.gaming": "Gaming",
+  "theme.lilac": "Lilac",
+  "theme.pink": "Pink"
 }

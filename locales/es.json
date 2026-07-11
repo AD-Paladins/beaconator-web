@@ -130,5 +130,13 @@
   "help.watchlist.prs": "Pinneá PRs específicos a tu watchlist. Usá 'Buscar PRs' para encontrar y pinnear, o 'Ver PRs watcheados' para ver y des-pinnear. Los PRs watcheados muestran badges de CI y approvals.",
   "help.io.title": "Importar / Exportar",
   "help.io.export": "Exportá tus settings a un archivo JSON. Puedes seleccionar qué categorías incluir y opcionalmente encriptar con una clave.",
-  "help.io.import": "Importá settings desde un archivo. Vas a ver un preview de qué va a cambiar antes de aplicar. Seleccioná qué categorías importar para no sobreescribir datos existentes."
+  "help.io.import": "Importá settings desde un archivo. Vas a ver un preview de qué va a cambiar antes de aplicar. Seleccioná qué categorías importar para no sobreescribir datos existentes.",
+
+  "theme.dark": "Oscuro",
+  "theme.light": "Claro",
+  "theme.hcLight": "Alto Contraste Claro",
+  "theme.hcDark": "Alto Contraste Oscuro",
+  "theme.gaming": "Gaming",
+  "theme.lilac": "Lila",
+  "theme.pink": "Rosa"
 }

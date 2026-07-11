@@ -8,6 +8,12 @@
   <link rel="icon" href="./icon.svg" />
   <meta name="theme-color" content="#14151a" />
   <link rel="stylesheet" href="./style.css" />
+  <script>
+    (function() {
+      var t = localStorage.getItem('devdash_theme');
+      if (t && t !== 'dark') document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
 </head>
 <body>
   <header>
@@ -19,6 +25,10 @@
       <div class="lang-selector" id="lang-selector">
         <button class="icon-btn lang-btn" id="lang-btn">en</button>
         <div class="lang-dropdown" id="lang-dropdown"></div>
+      </div>
+      <div class="lang-selector" id="theme-selector">
+        <button class="icon-btn lang-btn" id="theme-btn" title="theme">&#9679;</button>
+        <div class="lang-dropdown" id="theme-dropdown"></div>
       </div>
       <button class="icon-btn" id="settings-btn" data-i18n="header.settings">settings</button>
     </div>

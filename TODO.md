@@ -39,15 +39,15 @@ PWA personal para monitorear PRs de GitHub y tickets de Jira. Actualmente funcio
 - [ ] Rate limiting básico para evitar abuso
 
 ### 3. Selector de temas
-- [ ] Dark (actual) — default
-- [ ] Light — fondo claro, texto oscuro
-- [ ] High contrast light — fondo blanco, texto negro, bordes gruesos
-- [ ] High contrast dark — fondo negro puro, texto blanco puro, bordes gruesos
-- [ ] Gaming — púrpura/amarillo, estilo gamer
-- [ ] Lilac — tonos lila suaves
-- [ ] Pink — rosa (no fosforescente)
-- [ ] Selector de temas en el header o settings
-- [ ] Persistir preferencia en localStorage
+- [x] Dark (actual) — default
+- [x] Light — fondo claro, texto oscuro
+- [x] High contrast light — fondo blanco, texto negro, bordes gruesos
+- [x] High contrast dark — fondo negro puro, texto blanco puro, bordes gruesos
+- [x] Gaming — púrpura/amarillo, estilo gamer
+- [x] Lilac — tonos lila suaves
+- [x] Pink — rosa (no fosforescente)
+- [x] Selector de temas en el header o settings
+- [x] Persistir preferencia en localStorage
 
 ### 4. Integración IA
 - [ ] Evaluar calidad de descripciones de PRs (las plantillas existentes tienen 200-300 chars pero no dicen nada útil)
