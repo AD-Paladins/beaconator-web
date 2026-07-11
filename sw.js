@@ -1,5 +1,5 @@
-const CACHE = 'devdash-v2';
-const SHELL = ['./index.html', './style.css', './main.js', './config.js', './github.js', './jira.js', './ui.js', './metrics.js', './i18n.js', './locales/en.json', './locales/es.json', './manifest.json', './icon.svg'];
+const CACHE = 'devdash-v15';
+const SHELL = ['./index.html', './style.css', './main.js', './config.js', './github.js', './jira.js', './ui.js', './ui-utils.js', './ui-crypto.js', './metrics.js', './notifications.js', './i18n.js', './locales/en.json', './locales/es.json', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)));

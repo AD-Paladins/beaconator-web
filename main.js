@@ -1,4 +1,4 @@
-import { refreshAll, openSettings, refreshMetrics, setupPeriodButtons } from './ui.js';
+import { refreshAll, openSettings, refreshMetrics, setupPeriodButtons, initNotifications } from './ui.js';
 import { t, setLanguage, getLanguage, getAvailableLanguages, updateDOM } from './i18n.js';
 
 // ---- Language selector ----
@@ -61,6 +61,7 @@ if ('serviceWorker' in navigator) {
 updateDOM();
 setupLangSelector();
 setupPeriodButtons();
+initNotifications();
 refreshAll();
 refreshMetrics();
 setInterval(() => {

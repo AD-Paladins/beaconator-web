@@ -6,6 +6,7 @@ export function getConfig() {
   return raw ? JSON.parse(raw) : {
     githubToken: '',
     githubRepos: '',
+    githubEmail: '',
     githubUser: '',
     jiraDomain: '',
     jiraEmail: '',

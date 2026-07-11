@@ -21,13 +21,19 @@ export async function fetchJira(cfg, jql) {
     const res = await fetch(url, { headers });
     if (!res.ok) {
       const body = await res.text();
+      if (res.status === 401) {
+        return { error: 'Jira: credenciales inválidas (401). Verificá email y token en Settings.' };
+      }
+      if (res.status === 403) {
+        return { error: 'Jira: acceso denegado (403). Verificá permisos de tu cuenta.' };
+      }
       return { error: `Jira API ${res.status}: ${body.slice(0, 200)}` };
     }
     const data = await res.json();
     return { items: data.issues || [] };
   } catch (e) {
     return {
-      error: `No se pudo conectar a Jira directamente (probable bloqueo CORS). Necesitas un proxy — ver nota en Settings. Detalle: ${e.message}`,
+      error: `No se pudo conectar a Jira directamente (probable bloqueo CORS). Necesitas un proxy — ver nota en Settings.`,
     };
   }
 }

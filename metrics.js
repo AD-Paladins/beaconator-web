@@ -28,8 +28,21 @@ async function ghFetch(cfg, url) {
       Accept: 'application/vnd.github+json',
     },
   });
-  if (!res.ok) return null;
-  return res.json();
+  const rateLimit = {
+    remaining: parseInt(res.headers.get('x-ratelimit-remaining') || '-1', 10),
+    reset: parseInt(res.headers.get('x-ratelimit-reset') || '0', 10),
+  };
+  if (!res.ok) {
+    if (res.status === 403 && rateLimit.remaining === 0) {
+      const resetDate = new Date(rateLimit.reset * 1000);
+      const minutes = Math.ceil((resetDate - Date.now()) / 60000);
+      return { error: 'rate_limited', minutes, rateLimit };
+    }
+    return null;
+  }
+  const data = await res.json();
+  data._rateLimit = rateLimit;
+  return data;
 }
 
 async function fetchMergedPRs(cfg, sinceDate) {
@@ -39,11 +52,13 @@ async function fetchMergedPRs(cfg, sinceDate) {
   const q = encodeURIComponent(`is:pr is:merged merged:>=${sinceDate} ${repoQuery}`.trim());
 
   const data = await ghFetch(cfg, `https://api.github.com/search/issues?q=${q}&sort=updated&per_page=30`);
+  if (data?.error === 'rate_limited') return { rateLimited: true, minutes: data.minutes };
   return data?.items || [];
 }
 
 async function fetchPRReviews(cfg, owner, repo, prNumber) {
   const data = await ghFetch(cfg, `https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}/reviews`);
+  if (data?.error === 'rate_limited') return [];
   return data || [];
 }
 
@@ -54,25 +69,42 @@ async function fetchOpenPRs(cfg) {
   const q = encodeURIComponent(`is:pr is:open ${repoQuery}`.trim());
 
   const data = await ghFetch(cfg, `https://api.github.com/search/issues?q=${q}&sort=updated&per_page=30`);
+  if (data?.error === 'rate_limited') return { rateLimited: true, minutes: data.minutes };
   return data?.items || [];
 }
 
 function parseRepoFromUrl(url) {
   const parts = url.split('/');
-  return { owner: parts[-2], repo: parts[-1] };
+  return { owner: parts[parts.length - 2], repo: parts[parts.length - 1] };
+}
+
+async function fetchClosedPRs(cfg, sinceDate) {
+  if (!cfg.githubToken || !cfg.githubRepos) return [];
+  const repos = cfg.githubRepos.split(',').map((r) => r.trim()).filter(Boolean);
+  const repoQuery = repos.map((r) => `repo:${r}`).join(' ');
+  const q = encodeURIComponent(`is:pr is:closed closed:>=${sinceDate} ${repoQuery}`.trim());
+
+  const data = await ghFetch(cfg, `https://api.github.com/search/issues?q=${q}&sort=updated&per_page=30`);
+  if (data?.error === 'rate_limited') return { rateLimited: true, minutes: data.minutes };
+  return data?.items || [];
 }
 
 async function computeGitHubMetrics(cfg, periodDays) {
   const since = daysAgo(periodDays);
   const merged = await fetchMergedPRs(cfg, since);
 
+  if (merged?.rateLimited) {
+    return { rateLimited: true, minutes: merged.minutes };
+  }
+
   const mergeTimes = [];
+  const firstApprovalTimes = [];
   const reviewGaps = [];
   const reviewRounds = [];
   let waitingForSecond = 0;
 
   const reviewsBatch = await Promise.allSettled(
-    merged.map(async (pr) => {
+    (merged || []).map(async (pr) => {
       const urlParts = pr.repository_url.split('/');
       const owner = urlParts[urlParts.length - 2];
       const repo = urlParts[urlParts.length - 1];
@@ -92,6 +124,11 @@ async function computeGitHubMetrics(cfg, periodDays) {
       .filter((r) => r.state === 'APPROVED')
       .sort((a, b) => new Date(a.submitted_at) - new Date(b.submitted_at));
 
+    if (approvals.length > 0) {
+      const firstApprovalHours = hoursBetween(pr.created_at, approvals[0].submitted_at);
+      if (firstApprovalHours > 0) firstApprovalTimes.push(firstApprovalHours);
+    }
+
     const uniqueDates = [...new Set(
       reviews.map((r) => new Date(r.submitted_at).toDateString())
     )];
@@ -103,8 +140,19 @@ async function computeGitHubMetrics(cfg, periodDays) {
     }
   }
 
+  const closedPRs = await fetchClosedPRs(cfg, since);
+  if (closedPRs?.rateLimited) {
+    return { rateLimited: true, minutes: closedPRs.minutes };
+  }
+  const totalClosed = (closedPRs || []).length;
+  const mergeRate = totalClosed > 0 ? Math.round(((merged || []).length / totalClosed) * 100) : null;
+
   const openPRs = await fetchOpenPRs(cfg);
-  for (const pr of openPRs) {
+  if (openPRs?.rateLimited) {
+    return { rateLimited: true, minutes: openPRs.minutes };
+  }
+
+  for (const pr of (openPRs || [])) {
     const urlParts = pr.repository_url.split('/');
     const owner = urlParts[urlParts.length - 2];
     const repo = urlParts[urlParts.length - 1];
@@ -114,11 +162,11 @@ async function computeGitHubMetrics(cfg, periodDays) {
   }
 
   return {
-    timeToFirstApproval: null,
+    timeToFirstApproval: median(firstApprovalTimes),
     timeBetweenApprovals: median(reviewGaps),
     reviewRounds: median(reviewRounds),
     waitingForSecond,
-    mergeRate: merged.length,
+    mergeRate,
     mergeTimes: median(mergeTimes),
   };
 }
@@ -184,8 +232,15 @@ export async function computeMetrics(periodDays) {
     computeJiraMetrics(cfg, periodDays),
   ]);
 
+  const ghResult = gh.status === 'fulfilled' ? gh.value : null;
+  const jiraResult = jira.status === 'fulfilled' ? jira.value : null;
+
+  if (ghResult?.rateLimited) {
+    return { rateLimited: `GitHub rate limit — esperá ${ghResult.minutes} min para reintentar` };
+  }
+
   return {
-    github: gh.status === 'fulfilled' ? gh.value : null,
-    jira: jira.status === 'fulfilled' ? jira.value : null,
+    github: ghResult,
+    jira: jiraResult,
   };
 }
