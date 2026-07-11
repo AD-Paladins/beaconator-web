@@ -50,10 +50,12 @@ PWA personal para monitorear PRs de GitHub y tickets de Jira. Actualmente funcio
 - [x] Persistir preferencia en localStorage
 
 ### 4. Integración IA
+- [x] Provider abstraction layer (ai-providers.js) — supports Google AI Studio, Groq, OpenAI, GitHub Models, custom
+- [x] Config de IA en settings (proveedor, API key, modelo)
+- [x] AI Insights modal con 3 secciones: resumen semanal, anomalías, sugerencias
+- [x] Cache de insights en localStorage (1h TTL)
+- [x] Traducciones EN/ES
 - [ ] Evaluar calidad de descripciones de PRs (las plantillas existentes tienen 200-300 chars pero no dicen nada útil)
-- [ ] Resumen semanal: qué se hizo, qué está stuck, qué necesita atención
-- [ ] Detección de anomalías en throughput y tiempos de review
-- [ ] Sugerencias automáticas: "este PR lleva 5d sin 2do review, considerá hacer ping"
 
 ### Notas
 - Deploy a Cloudflare Pages: pendiente hasta que el usuario lo solicite activamente

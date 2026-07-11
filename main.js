@@ -1,4 +1,4 @@
-import { refreshAll, openSettings, refreshMetrics, setupPeriodButtons, initNotifications } from './ui.js';
+import { refreshAll, openSettings, refreshMetrics, setupPeriodButtons, initNotifications, openAIModal } from './ui.js';
 import { t, setLanguage, getLanguage, getAvailableLanguages, updateDOM } from './i18n.js';
 import { THEMES, getTheme, setTheme } from './themes.js';
 
@@ -91,6 +91,10 @@ document.getElementById('settings-btn').addEventListener('click', () => {
     refreshAll();
     refreshMetrics();
   });
+});
+
+document.getElementById('ai-btn').addEventListener('click', () => {
+  openAIModal();
 });
 
 document.getElementById('refresh-btn').addEventListener('click', () => {

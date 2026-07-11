@@ -7,6 +7,8 @@ import { showLoading, showError, showEmpty } from './ui-utils.js';
 import { exportSelected, parseImportFile, getImportPreview, applyImport, collectCategories } from './ui-crypto.js';
 import { requestPermission, notifyReviewNeeded, getPendingCount, markAllSeen, getPermission } from './notifications.js';
 import { THEMES, getTheme, setTheme } from './themes.js';
+import { generateInsight, generateAllInsights, getCached, isCacheValid, renderMarkdown } from './ai.js';
+import { AI_PROVIDERS } from './ai-providers.js';
 
 // ---- Utils ----
 
@@ -570,6 +572,174 @@ function openHelp() {
   overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
 }
 
+// ---- AI Insights Modal ----
+
+function formatTimeAgo(timestamp) {
+  const diff = Date.now() - timestamp;
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return t('time.justNow');
+  if (minutes < 60) return t('time.hoursAgo', { n: minutes });
+  const hours = Math.floor(minutes / 60);
+  return t('time.hoursAgo', { n: hours });
+}
+
+export function openAIModal() {
+  const cfg = getConfig();
+  if (!cfg.aiApiKey) {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML = `
+      <div class="modal">
+        <h2>${t('ai.modal.title')}</h2>
+        <div class="empty-state">${t('ai.noKey')}</div>
+        <div class="modal-actions">
+          <button class="btn btn-primary" id="ai-setup">${t('settings.save')}</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    overlay.querySelector('#ai-setup').onclick = () => { overlay.remove(); openSettings(); };
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    return;
+  }
+
+  const types = ['summary', 'anomalies', 'suggestions'];
+  const tabStatus = {};
+  types.forEach((type) => { tabStatus[type] = isCacheValid(type) ? 'done' : 'pending'; });
+
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal modal-ai">
+      <h2>${t('ai.modal.title')}</h2>
+      <div class="ai-tabs">
+        ${types.map((type, i) => `
+          <button class="ai-tab${i === 0 ? ' active' : ''}" data-type="${type}">
+            <span class="ai-tab-label">${t(`ai.section.${type}`)}</span>
+            <span class="ai-tab-dot" data-type="${type}"></span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="ai-tab-content">
+        ${types.map((type, i) => `
+          <div class="ai-tab-panel${i === 0 ? ' active' : ''}" data-panel="${type}">
+            <div class="ai-tab-panel-inner"></div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="ai-footer">
+        <span class="ai-cost">${t('ai.cost')}</span>
+        <span class="ai-timestamp"></span>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="ai-refresh">${t('ai.refresh')}</button>
+        <button class="btn btn-primary" id="ai-close">${t('help.close')}</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const timestampEl = overlay.querySelector('.ai-timestamp');
+  let activeType = types[0];
+
+  function getPanel(type) {
+    return overlay.querySelector(`[data-panel="${type}"] .ai-tab-panel-inner`);
+  }
+
+  function getDot(type) {
+    return overlay.querySelector(`.ai-tab-dot[data-type="${type}"]`);
+  }
+
+  function setDotStatus(type, status) {
+    tabStatus[type] = status;
+    const dot = getDot(type);
+    dot.className = `ai-tab-dot ai-dot-${status}`;
+  }
+
+  function renderSection(type, content) {
+    getPanel(type).innerHTML = renderMarkdown(content);
+    setDotStatus(type, 'done');
+  }
+
+  function showSectionLoading(type) {
+    getPanel(type).innerHTML = '<div class="loading-state"><div class="spinner"></div></div>';
+    setDotStatus(type, 'loading');
+  }
+
+  function showSectionError(type, msg) {
+    getPanel(type).innerHTML = `<div class="error-state">${escapeHtml(msg)}</div>`;
+    setDotStatus(type, 'error');
+  }
+
+  function updateTimestamp() {
+    const latest = types.reduce((max, type) => {
+      const c = getCached(type);
+      return c && c.timestamp > max ? c.timestamp : max;
+    }, 0);
+    if (latest) timestampEl.textContent = t('ai.lastGenerated', { time: formatTimeAgo(latest) });
+  }
+
+  async function refreshSingle(type) {
+    showSectionLoading(type);
+    try {
+      const result = await generateInsight(type);
+      renderSection(type, result);
+      updateTimestamp();
+    } catch (e) {
+      const msg = e.message === 'no_api_key' ? t('ai.noKey')
+        : e.message.startsWith('rate_limited:') ? `Rate limited — retry in ${e.message.split(':')[1]}s`
+        : `${t('ai.error')}: ${e.message}`;
+      showSectionError(type, msg);
+    }
+  }
+
+  async function loadInsights() {
+    for (const type of types) {
+      if (isCacheValid(type)) {
+        const cached = getCached(type);
+        renderSection(type, cached.content);
+      } else {
+        showSectionLoading(type);
+      }
+    }
+    updateTimestamp();
+
+    const needsFetch = types.filter((type) => !isCacheValid(type));
+    if (!needsFetch.length) return;
+
+    try {
+      await generateAllInsights();
+
+      for (const type of needsFetch) {
+        const cached = getCached(type);
+        if (cached) renderSection(type, cached.content);
+      }
+      updateTimestamp();
+    } catch (e) {
+      const msg = e.message === 'no_api_key' ? t('ai.noKey')
+        : e.message.startsWith('rate_limited:') ? `Rate limited — retry in ${e.message.split(':')[1]}s`
+        : `${t('ai.error')}: ${e.message}`;
+      for (const type of needsFetch) showSectionError(type, msg);
+    }
+  }
+
+  overlay.querySelectorAll('.ai-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      overlay.querySelectorAll('.ai-tab').forEach((t2) => t2.classList.remove('active'));
+      overlay.querySelectorAll('.ai-tab-panel').forEach((p) => p.classList.remove('active'));
+      tab.classList.add('active');
+      overlay.querySelector(`[data-panel="${tab.dataset.type}"]`).classList.add('active');
+      activeType = tab.dataset.type;
+    });
+  });
+
+  loadInsights();
+
+  overlay.querySelector('#ai-refresh').onclick = () => refreshSingle(activeType);
+  overlay.querySelector('#ai-close').onclick = () => overlay.remove();
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+}
+
 // ---- Repo Browser ----
 
 function openRepoBrowser(cfg, onDone) {
@@ -923,6 +1093,30 @@ export function openSettings(onSave) {
         <div class="field-hint">${t('settings.jiraProxy.hint')}</div>
       </div>
 
+      <div class="section-divider">${t('settings.ai')}</div>
+      <div class="field">
+        <label>${t('settings.aiProvider')}</label>
+        <select id="cfg-ai-provider" class="cfg-select">
+          ${Object.entries(AI_PROVIDERS).map(([id, p]) =>
+            `<option value="${id}"${cfg.aiProvider === id ? ' selected' : ''}>${p.name}</option>`
+          ).join('')}
+        </select>
+      </div>
+      <div class="field">
+        <label>${t('settings.aiApiKey')}</label>
+        <input type="password" id="cfg-ai-key" value="${escapeHtml(cfg.aiApiKey || '')}" placeholder="..." />
+        <div class="field-hint"><span id="ai-key-hint"></span></div>
+      </div>
+      <div class="field" id="cfg-ai-model-field">
+        <label>${t('settings.aiModel')}</label>
+        <select id="cfg-ai-model" class="cfg-select"></select>
+      </div>
+      <div class="field" id="cfg-ai-custom-field" style="display:none">
+        <label>${t('settings.aiCustomUrl')}</label>
+        <input type="text" id="cfg-ai-custom-url" value="${escapeHtml(cfg.aiCustomUrl || '')}" placeholder="https://your-api.com/v1" />
+        <div class="field-hint">${t('settings.aiCustomUrl.hint')}</div>
+      </div>
+
       <div class="section-divider">${t('settings.watchlist')}</div>
       <div class="field">
         <label>${t('settings.watchlistKeys')}</label>
@@ -954,6 +1148,44 @@ export function openSettings(onSave) {
     </div>
   `;
   document.body.appendChild(overlay);
+
+  // ---- AI settings dynamic behavior ----
+  const aiProviderSelect = overlay.querySelector('#cfg-ai-provider');
+  const aiKeyInput = overlay.querySelector('#cfg-ai-key');
+  const aiKeyHint = overlay.querySelector('#ai-key-hint');
+  const aiModelSelect = overlay.querySelector('#cfg-ai-model');
+  const aiModelField = overlay.querySelector('#cfg-ai-model-field');
+  const aiCustomField = overlay.querySelector('#cfg-ai-custom-field');
+  const aiCustomInput = overlay.querySelector('#cfg-ai-custom-url');
+
+  function updateAIFields() {
+    const providerId = aiProviderSelect.value;
+    const provider = AI_PROVIDERS[providerId];
+    if (!provider) return;
+
+    if (provider.keyUrl) {
+      aiKeyHint.innerHTML = `<a href="${provider.keyUrl}" target="_blank" rel="noopener">${provider.keyUrl}</a>`;
+    } else {
+      aiKeyHint.textContent = '';
+    }
+
+    aiModelSelect.innerHTML = provider.models
+      .map((m) => `<option value="${m.id}"${m.id === cfg.aiModel ? ' selected' : ''}>${m.name}</option>`)
+      .join('');
+
+    if (providerId === 'custom') {
+      aiCustomField.style.display = '';
+      aiModelField.style.display = 'none';
+    } else {
+      aiCustomField.style.display = 'none';
+      aiModelField.style.display = '';
+    }
+  }
+
+  aiProviderSelect.addEventListener('change', updateAIFields);
+  updateAIFields();
+
+  // ---- end AI settings ----
 
   overlay.querySelector('#cfg-repo-browser').onclick = () => {
     openRepoBrowser(cfg, (repos) => {
@@ -989,6 +1221,10 @@ export function openSettings(onSave) {
       jiraToken: document.getElementById('cfg-jira-token').value.trim(),
       jiraJql: document.getElementById('cfg-jira-jql').value.trim(),
       jiraProxyUrl: document.getElementById('cfg-jira-proxy').value.trim(),
+      aiProvider: document.getElementById('cfg-ai-provider').value,
+      aiApiKey: document.getElementById('cfg-ai-key').value.trim(),
+      aiModel: document.getElementById('cfg-ai-model').value || getConfig().aiModel,
+      aiCustomUrl: document.getElementById('cfg-ai-custom-url')?.value.trim() || '',
     };
     setConfig(newCfg);
     const jiraInput = document.getElementById('cfg-watchlist-jira').value;

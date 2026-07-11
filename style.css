@@ -769,3 +769,111 @@ main {
   line-height: 1.5;
   margin: 0 0 4px 0;
 }
+
+/* AI Modal */
+.modal-ai {
+  width: 520px;
+}
+
+.ai-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0;
+}
+
+.ai-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 8px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-dim);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.ai-tab:hover { color: var(--text); }
+.ai-tab.active {
+  color: var(--text);
+  border-bottom-color: var(--accent-pr);
+}
+
+.ai-tab-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+}
+.ai-dot-loading { background: var(--accent-watch); animation: pulse 1s ease-in-out infinite; }
+.ai-dot-done { background: var(--accent-jira); }
+.ai-dot-error { background: var(--danger); }
+.ai-dot-pending { background: var(--border); }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.ai-tab-content {
+  min-height: 200px;
+  max-height: 55vh;
+  overflow-y: auto;
+}
+
+.ai-tab-panel { display: none; }
+.ai-tab-panel.active { display: block; }
+
+.ai-tab-panel-inner {
+  padding: 14px 2px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.ai-footer {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.ai-markdown h2 { font-size: 13px; margin: 10px 0 6px 0; color: var(--text); }
+.ai-markdown h3 { font-size: 12px; margin: 8px 0 4px 0; color: var(--text); }
+.ai-markdown h4 { font-size: 12px; margin: 6px 0 3px 0; color: var(--accent-pr); }
+.ai-markdown ul { margin: 4px 0; padding-left: 16px; }
+.ai-markdown li { margin-bottom: 3px; }
+.ai-markdown strong { color: var(--text); }
+.ai-markdown code {
+  background: rgba(167,139,250,0.15);
+  color: var(--accent-metrics);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-family: 'SF Mono', Menlo, monospace;
+  font-size: 11px;
+}
+
+/* Settings select */
+.cfg-select {
+  width: 100%;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.cfg-select:focus {
+  outline: none;
+  border-color: var(--accent-pr);
+}

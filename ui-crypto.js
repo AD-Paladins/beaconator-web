@@ -3,6 +3,7 @@ const EXPORT_VERSION = 2;
 const CATEGORIES = {
   github: { key: 'devdash_config_v1', fields: ['githubToken', 'githubEmail', 'githubUser', 'githubRepos'], label: 'GitHub' },
   jira: { key: 'devdash_config_v1', fields: ['jiraDomain', 'jiraEmail', 'jiraToken', 'jiraJql', 'jiraProxyUrl'], label: 'Jira' },
+  ai: { key: 'devdash_config_v1', fields: ['aiProvider', 'aiApiKey', 'aiModel', 'aiCustomUrl'], label: 'AI' },
   watchlistJira: { key: 'devdash_watchlist_v1', filter: (list) => list.filter((i) => (i.type || 'jira') === 'jira'), label: 'Jira watchlist' },
   watchlistPRs: { key: 'devdash_watchlist_v1', filter: (list) => list.filter((i) => i.type === 'pr'), label: 'PR watchlist' },
   lang: { key: 'devdash_lang_v1', label: 'Language' },
@@ -104,6 +105,11 @@ export function exportSelected(categories, password) {
     CATEGORIES.jira.fields.forEach((f) => { jira[f] = cfg[f] || ''; });
     payload._jira = jira;
   }
+  if (categories.ai) {
+    const ai = {};
+    CATEGORIES.ai.fields.forEach((f) => { ai[f] = cfg[f] || ''; });
+    payload._ai = ai;
+  }
   if (categories.watchlistJira) {
     payload._watchlistJira = CATEGORIES.watchlistJira.filter(watchlist);
   }
@@ -168,6 +174,13 @@ export function getImportPreview(payload) {
       items: fields.map((f) => ({ field: f, current: cfg[f] || '', incoming: payload._jira[f] || '', changed: (cfg[f] || '') !== (payload._jira[f] || '') })),
     };
   }
+  if (payload._ai) {
+    const fields = CATEGORIES.ai.fields;
+    preview.ai = {
+      label: 'AI',
+      items: fields.map((f) => ({ field: f, current: cfg[f] || '', incoming: payload._ai[f] || '', changed: (cfg[f] || '') !== (payload._ai[f] || '') })),
+    };
+  }
   if (payload._watchlistJira) {
     const current = watchlist.filter((i) => (i.type || 'jira') === 'jira').map((i) => i.key);
     const incoming = payload._watchlistJira.map((i) => i.key);
@@ -193,6 +206,9 @@ export function applyImport(payload, selected) {
   }
   if (selected.jira && payload._jira) {
     Object.assign(cfg, payload._jira);
+  }
+  if (selected.ai && payload._ai) {
+    Object.assign(cfg, payload._ai);
   }
   localStorage.setItem('devdash_config_v1', JSON.stringify(cfg));
 
