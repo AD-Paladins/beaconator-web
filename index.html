@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dev Dashboard</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./icon.svg" />
+  <meta name="theme-color" content="#14151a" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <header>
+    <h1 data-i18n="app.title">dev-dashboard</h1>
+    <div class="actions">
+      <span class="status" id="status" data-i18n="header.loading">loading...</span>
+      <button class="icon-btn" id="refresh-btn" data-i18n="header.refresh">refresh</button>
+      <div class="lang-selector" id="lang-selector">
+        <button class="icon-btn lang-btn" id="lang-btn">EN</button>
+        <div class="lang-dropdown" id="lang-dropdown"></div>
+      </div>
+      <button class="icon-btn" id="settings-btn" data-i18n="header.settings">settings</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <p class="panel-title"><span class="dot dot-pr"></span><span data-i18n="panel.prs">active prs</span></p>
+      <div id="pr-list"></div>
+    </section>
+
+    <section class="panel">
+      <p class="panel-title"><span class="dot dot-jira"></span><span data-i18n="panel.jira">my jira</span></p>
+      <div id="jira-list"></div>
+    </section>
+
+    <section class="panel">
+      <p class="panel-title"><span class="dot dot-watch"></span><span data-i18n="panel.watchlist">watchlist</span></p>
+      <div id="watch-list"></div>
+    </section>
+
+    <section class="panel panel-metrics">
+      <div class="panel-header">
+        <p class="panel-title"><span class="dot dot-metrics"></span><span data-i18n="panel.metrics">metrics</span></p>
+        <div class="period-buttons">
+          <button class="period-btn active" data-days="2">2d</button>
+          <button class="period-btn" data-days="3">3d</button>
+          <button class="period-btn" data-days="4">4d</button>
+          <button class="period-btn" data-days="5">5d+</button>
+        </div>
+      </div>
+      <div id="metrics-content"></div>
+    </section>
+  </main>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

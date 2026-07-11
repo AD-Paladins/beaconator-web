@@ -1,0 +1,53 @@
+{
+  "app.title": "dev-dashboard",
+  "header.loading": "loading...",
+  "header.refresh": "refresh",
+  "header.settings": "settings",
+
+  "panel.prs": "active prs",
+  "panel.jira": "my jira",
+  "panel.watchlist": "watchlist",
+  "panel.metrics": "metrics",
+
+  "pr.empty": "No active PRs.",
+  "jira.empty": "Nothing here.",
+  "watchlist.empty": "Add tickets to your watchlist from Settings.",
+  "watchlist.remove": "remove from watchlist",
+
+  "status.loading": "updating...",
+  "status.updated": "updated {time}",
+
+  "metrics.loading": "calculating...",
+  "metrics.error": "Could not load metrics.",
+  "metrics.timeToFirst": "1st approval (med)",
+  "metrics.timeBetween": "between approvals (med)",
+  "metrics.reviewRounds": "review rounds (med)",
+  "metrics.waitingSecond": "waiting for 2nd approval",
+  "metrics.mergeRate": "merge rate",
+  "metrics.jiraThroughput": "jira throughput",
+
+  "time.justNow": "<1h ago",
+  "time.hoursAgo": "{n}h ago",
+  "time.daysAgo": "{n}d ago",
+
+  "settings.title": "Settings",
+  "settings.github": "GitHub",
+  "settings.jira": "Jira",
+  "settings.watchlist": "Watchlist",
+
+  "settings.ghToken": "Personal access token (scope: repo)",
+  "settings.ghUser": "Your GitHub username",
+  "settings.ghRepos": "Repos to monitor (owner/repo, comma-separated)",
+  "settings.ghRepos.placeholder": "org/repo1, org/repo2",
+
+  "settings.jiraDomain": "Domain (e.g. yourcompany.atlassian.net)",
+  "settings.jiraEmail": "Jira email",
+  "settings.jiraToken": "Jira API token",
+  "settings.jiraJql": "Custom JQL for \"My Jira\" (optional)",
+  "settings.jiraProxy": "Proxy URL (optional, if Jira blocks direct CORS)",
+  "settings.jiraProxy.hint": "Jira Cloud doesn't allow direct browser calls (CORS). If the Jira panel fails, you need a small proxy (Cloudflare Worker/Vercel function) to forward the request with your auth. Leave empty to try direct first.",
+
+  "settings.watchlistKeys": "Watchlist tickets (comma-separated keys)",
+  "settings.cancel": "Cancel",
+  "settings.save": "Save"
+}

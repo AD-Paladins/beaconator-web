@@ -1,0 +1,53 @@
+{
+  "app.title": "dev-dashboard",
+  "header.loading": "cargando...",
+  "header.refresh": "refresh",
+  "header.settings": "settings",
+
+  "panel.prs": "active prs",
+  "panel.jira": "my jira",
+  "panel.watchlist": "watchlist",
+  "panel.metrics": "metrics",
+
+  "pr.empty": "Sin PRs activos.",
+  "jira.empty": "Nada por aquí.",
+  "watchlist.empty": "Agrega tickets a tu watchlist desde Settings.",
+  "watchlist.remove": "quitar de watchlist",
+
+  "status.loading": "actualizando...",
+  "status.updated": "actualizado {time}",
+
+  "metrics.loading": "calculando...",
+  "metrics.error": "No se pudieron cargar las métricas.",
+  "metrics.timeToFirst": "1er approval (med)",
+  "metrics.timeBetween": "entre approvals (med)",
+  "metrics.reviewRounds": "rondas de review (med)",
+  "metrics.waitingSecond": "esperando 2do approval",
+  "metrics.mergeRate": "merge rate",
+  "metrics.jiraThroughput": "jira throughput",
+
+  "time.justNow": "hace <1h",
+  "time.hoursAgo": "hace {n}h",
+  "time.daysAgo": "hace {n}d",
+
+  "settings.title": "Settings",
+  "settings.github": "GitHub",
+  "settings.jira": "Jira",
+  "settings.watchlist": "Watchlist",
+
+  "settings.ghToken": "Personal access token (scope: repo)",
+  "settings.ghUser": "Tu usuario de GitHub",
+  "settings.ghRepos": "Repos a monitorear (owner/repo, separados por coma)",
+  "settings.ghRepos.placeholder": "org/repo1, org/repo2",
+
+  "settings.jiraDomain": "Dominio (ej: tuempresa.atlassian.net)",
+  "settings.jiraEmail": "Email de Jira",
+  "settings.jiraToken": "API token de Jira",
+  "settings.jiraJql": "JQL personalizado para \"My Jira\" (opcional)",
+  "settings.jiraProxy": "Proxy URL (opcional, si Jira bloquea CORS directo)",
+  "settings.jiraProxy.hint": "Jira Cloud no permite llamadas directas desde el navegador (CORS). Si el panel de Jira falla, necesitas un pequeño proxy (Cloudflare Worker/Vercel function) que reenvíe la llamada con tu auth. Déjalo vacío para intentar directo primero.",
+
+  "settings.watchlistKeys": "Tickets en watchlist (keys separados por coma)",
+  "settings.cancel": "Cancelar",
+  "settings.save": "Guardar"
+}
