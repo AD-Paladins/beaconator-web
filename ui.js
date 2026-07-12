@@ -1058,7 +1058,7 @@ export function openSettings(onSave) {
         <div class="section-divider">${t('settings.github')}</div>
         <div class="field">
           <label>${t('settings.ghToken')}</label>
-          <input type="password" id="cfg-gh-token" value="${escapeHtml(cfg.githubToken)}" placeholder="ghp_..." />
+          <input type="password" id="cfg-gh-token" value="${escapeHtml(cfg.githubToken)}" placeholder="ghp_..." autocomplete="off" />
         </div>
         <div class="field">
           <label>${t('settings.ghRepos')}</label>
@@ -1069,7 +1069,7 @@ export function openSettings(onSave) {
         </div>
         <div class="field">
           <label>${t('settings.ghEmail')}</label>
-          <input type="email" id="cfg-gh-email" value="${escapeHtml(cfg.githubEmail)}" placeholder="you@email.com" />
+          <input type="email" id="cfg-gh-email" value="${escapeHtml(cfg.githubEmail)}" placeholder="you@email.com" autocomplete="off" />
           <div class="field-hint">${t('settings.ghEmail.hint')}</div>
         </div>
         <div class="field">
@@ -1089,7 +1089,7 @@ export function openSettings(onSave) {
         </div>
         <div class="field">
           <label>${t('settings.jiraToken')}</label>
-          <input type="password" id="cfg-jira-token" value="${escapeHtml(cfg.jiraToken)}" placeholder="token" />
+          <input type="password" id="cfg-jira-token" value="${escapeHtml(cfg.jiraToken)}" placeholder="token" autocomplete="off" />
         </div>
         <div class="field">
           <label>${t('settings.jiraJql')}</label>
@@ -1113,7 +1113,7 @@ export function openSettings(onSave) {
         </div>
         <div class="field">
           <label>${t('settings.aiApiKey')}</label>
-          <input type="password" id="cfg-ai-key" value="${escapeHtml(cfg.aiApiKey || '')}" placeholder="..." />
+          <input type="password" id="cfg-ai-key" value="${escapeHtml(cfg.aiApiKey || '')}" placeholder="..." autocomplete="off" />
           <div class="field-hint"><span id="ai-key-hint"></span></div>
         </div>
         <div class="field" id="cfg-ai-model-field">
@@ -1326,7 +1326,7 @@ function openExportModal(feedback) {
       <div class="export-legend">${t('export.legend')}</div>
       <div class="field" style="margin-top:12px">
         <label>${t('export.passwordLabel')}</label>
-        <input type="password" id="export-password" placeholder="${t('export.passwordPlaceholder')}" />
+        <input type="password" id="export-password" placeholder="${t('export.passwordPlaceholder')}" autocomplete="off" />
       </div>
       <div class="io-feedback" id="export-feedback"></div>
       <div class="modal-actions">

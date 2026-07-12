@@ -58,5 +58,14 @@ PWA personal para monitorear PRs de GitHub y tickets de Jira. Actualmente funcio
 - [ ] Evaluar calidad de descripciones de PRs (las plantillas existentes tienen 200-300 chars pero no dicen nada útil)
 - [ ] Cargar modelos dinámicamente desde el provider (GET /models o listas hardcodeadas por provider)
 
+### 5. Desktop app
+- [ ] Evaluar Electron vs Tauri vs Wails
+  - **Electron**: más fácil de arrancar, pesado (~150MB), Node.js
+  - **Tauri**: liviano (~5MB), usa webview del sistema, necesita Rust
+  - **Wails**: como Tauri pero con Go, más simple si no conocés Rust
+- [ ] Wrapper mínimo: cargar la PWA existente en un webview nativo
+- [ ] Acceso directo a filesystem (logs, configs) si se necesita
+- [ ] Build y distribución (auto-update, installers)
+
 ### Notas
 - Deploy a Cloudflare Pages: pendiente hasta que el usuario lo solicite activamente
