@@ -39,7 +39,7 @@ export const AI_PROVIDERS = {
     keyUrl: 'https://github.com/settings/tokens',
   },
   custom: {
-    name: 'Custom (OpenAI-compatible)',
+    name: 'Custom / Local (OpenAI-compatible)',
     baseUrl: '',
     models: [{ id: '', name: 'Custom model' }],
     keyUrl: '',
@@ -59,16 +59,22 @@ export async function chatCompletion(cfg, { system, user, temperature = 0.3, max
   const provider = AI_PROVIDERS[cfg.aiProvider];
   if (!provider) throw new Error('Unknown AI provider');
 
-  const baseUrl = cfg.aiProvider === 'custom' ? cfg.aiCustomUrl : provider.baseUrl;
+  let baseUrl = cfg.aiProvider === 'custom' ? cfg.aiCustomUrl : provider.baseUrl;
   if (!baseUrl) throw new Error('Missing API base URL');
-  if (!cfg.aiApiKey) throw new Error('Missing API key');
+
+  if (cfg.aiProvider === 'custom' && !/^https?:\/\//i.test(baseUrl)) {
+    baseUrl = `http://${baseUrl}`;
+  }
+
+  const needsKey = !['custom'].includes(cfg.aiProvider);
+  if (needsKey && !cfg.aiApiKey) throw new Error('Missing API key');
+
+  const headers = { 'Content-Type': 'application/json' };
+  if (cfg.aiApiKey) headers.Authorization = `Bearer ${cfg.aiApiKey}`;
 
   const res = await fetch(`${baseUrl}/chat/completions`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${cfg.aiApiKey}`,
-    },
+    headers,
     body: JSON.stringify({
       model: cfg.aiModel,
       temperature,

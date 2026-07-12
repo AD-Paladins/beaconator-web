@@ -13,8 +13,9 @@ const DEFAULTS = {
   jiraProxyUrl: '',
   aiProvider: 'google-ai-studio',
   aiApiKey: '',
+  aiApiKeys: {},
   aiModel: 'gemini-3.5-flash',
-  aiCustomUrl: '',
+  aiCustomUrl: 'localhost:11434/v1',
 };
 
 const STALE_AI_MODELS = ['gemini-2.5-flash', 'gemini-2.5-pro'];

@@ -1044,102 +1044,140 @@ export function openSettings(onSave) {
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
   overlay.innerHTML = `
-    <div class="modal">
+    <div class="modal modal-settings">
       <h2>${t('settings.title')}</h2>
-
-      <div class="section-divider">${t('settings.github')}</div>
-      <div class="field">
-        <label>${t('settings.ghToken')}</label>
-        <input type="password" id="cfg-gh-token" value="${escapeHtml(cfg.githubToken)}" placeholder="ghp_..." />
+      <div class="settings-tabs">
+        <button class="settings-tab active" data-tab="general">${t('settings.tabGeneral')}</button>
+        <button class="settings-tab" data-tab="ai">${t('settings.tabAI')}</button>
+        <button class="settings-tab" data-tab="watchlist">${t('settings.tabWatchlist')}</button>
+        <button class="settings-tab" data-tab="io">${t('settings.tabIO')}</button>
+        <button class="settings-tab" data-tab="help">${t('settings.tabHelp')}</button>
       </div>
-      <div class="field">
-        <label>${t('settings.ghRepos')}</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn" id="cfg-view-repos">${t('settings.viewRepos')}</button>
-          <button class="btn" id="cfg-repo-browser">${t('settings.browseRepos')}</button>
+
+      <div class="settings-tab-panel active" data-panel="general">
+        <div class="section-divider">${t('settings.github')}</div>
+        <div class="field">
+          <label>${t('settings.ghToken')}</label>
+          <input type="password" id="cfg-gh-token" value="${escapeHtml(cfg.githubToken)}" placeholder="ghp_..." />
         </div>
-      </div>
-      <div class="field">
-        <label>${t('settings.ghEmail')}</label>
-        <input type="email" id="cfg-gh-email" value="${escapeHtml(cfg.githubEmail)}" placeholder="you@email.com" />
-        <div class="field-hint">${t('settings.ghEmail.hint')}</div>
-      </div>
-      <div class="field">
-        <label>${t('settings.ghUser')}</label>
-        <input type="text" id="cfg-gh-user" value="${escapeHtml(cfg.githubUser || '')}" placeholder="${t('settings.ghUser.placeholder')}" />
-        <div class="field-hint">${t('settings.ghUser.hint')}</div>
-      </div>
+        <div class="field">
+          <label>${t('settings.ghRepos')}</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn" id="cfg-view-repos">${t('settings.viewRepos')}</button>
+            <button class="btn" id="cfg-repo-browser">${t('settings.browseRepos')}</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>${t('settings.ghEmail')}</label>
+          <input type="email" id="cfg-gh-email" value="${escapeHtml(cfg.githubEmail)}" placeholder="you@email.com" />
+          <div class="field-hint">${t('settings.ghEmail.hint')}</div>
+        </div>
+        <div class="field">
+          <label>${t('settings.ghUser')}</label>
+          <input type="text" id="cfg-gh-user" value="${escapeHtml(cfg.githubUser || '')}" placeholder="${t('settings.ghUser.placeholder')}" />
+          <div class="field-hint">${t('settings.ghUser.hint')}</div>
+        </div>
 
-      <div class="section-divider">${t('settings.jira')}</div>
-      <div class="field">
-        <label>${t('settings.jiraDomain')}</label>
-        <input type="text" id="cfg-jira-domain" value="${escapeHtml(cfg.jiraDomain)}" placeholder="yourcompany.atlassian.net" />
-      </div>
-      <div class="field">
-        <label>${t('settings.jiraEmail')}</label>
-        <input type="text" id="cfg-jira-email" value="${escapeHtml(cfg.jiraEmail)}" placeholder="you@email.com" />
-      </div>
-      <div class="field">
-        <label>${t('settings.jiraToken')}</label>
-        <input type="password" id="cfg-jira-token" value="${escapeHtml(cfg.jiraToken)}" placeholder="token" />
-      </div>
-      <div class="field">
-        <label>${t('settings.jiraJql')}</label>
-        <textarea id="cfg-jira-jql" placeholder="assignee = currentUser() AND resolution = Unresolved">${escapeHtml(cfg.jiraJql)}</textarea>
-      </div>
-      <div class="field">
-        <label>${t('settings.jiraProxy')}</label>
-        <input type="text" id="cfg-jira-proxy" value="${escapeHtml(cfg.jiraProxyUrl)}" placeholder="https://your-proxy.workers.dev" />
-        <div class="field-hint">${t('settings.jiraProxy.hint')}</div>
-      </div>
-
-      <div class="section-divider">${t('settings.ai')}</div>
-      <div class="field">
-        <label>${t('settings.aiProvider')}</label>
-        <select id="cfg-ai-provider" class="cfg-select">
-          ${Object.entries(AI_PROVIDERS).map(([id, p]) =>
-            `<option value="${id}"${cfg.aiProvider === id ? ' selected' : ''}>${p.name}</option>`
-          ).join('')}
-        </select>
-      </div>
-      <div class="field">
-        <label>${t('settings.aiApiKey')}</label>
-        <input type="password" id="cfg-ai-key" value="${escapeHtml(cfg.aiApiKey || '')}" placeholder="..." />
-        <div class="field-hint"><span id="ai-key-hint"></span></div>
-      </div>
-      <div class="field" id="cfg-ai-model-field">
-        <label>${t('settings.aiModel')}</label>
-        <select id="cfg-ai-model" class="cfg-select"></select>
-      </div>
-      <div class="field" id="cfg-ai-custom-field" style="display:none">
-        <label>${t('settings.aiCustomUrl')}</label>
-        <input type="text" id="cfg-ai-custom-url" value="${escapeHtml(cfg.aiCustomUrl || '')}" placeholder="https://your-api.com/v1" />
-        <div class="field-hint">${t('settings.aiCustomUrl.hint')}</div>
-      </div>
-
-      <div class="section-divider">${t('settings.watchlist')}</div>
-      <div class="field">
-        <label>${t('settings.watchlistKeys')}</label>
-        <input type="text" id="cfg-watchlist-jira" value="${escapeHtml(jiraKeys.join(', '))}" placeholder="PROJ-123, PROJ-456" />
-      </div>
-      <div class="field">
-        <label>${t('settings.watchlistPRs')}</label>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn" id="cfg-view-watched-prs">${t('settings.viewWatchedPRs')}</button>
-          <button class="btn" id="cfg-pr-browser">${t('settings.browsePRs')}</button>
+        <div class="section-divider">${t('settings.jira')}</div>
+        <div class="field">
+          <label>${t('settings.jiraDomain')}</label>
+          <input type="text" id="cfg-jira-domain" value="${escapeHtml(cfg.jiraDomain)}" placeholder="yourcompany.atlassian.net" />
+        </div>
+        <div class="field">
+          <label>${t('settings.jiraEmail')}</label>
+          <input type="text" id="cfg-jira-email" value="${escapeHtml(cfg.jiraEmail)}" placeholder="you@email.com" />
+        </div>
+        <div class="field">
+          <label>${t('settings.jiraToken')}</label>
+          <input type="password" id="cfg-jira-token" value="${escapeHtml(cfg.jiraToken)}" placeholder="token" />
+        </div>
+        <div class="field">
+          <label>${t('settings.jiraJql')}</label>
+          <textarea id="cfg-jira-jql" placeholder="assignee = currentUser() AND resolution = Unresolved">${escapeHtml(cfg.jiraJql)}</textarea>
+        </div>
+        <div class="field">
+          <label>${t('settings.jiraProxy')}</label>
+          <input type="text" id="cfg-jira-proxy" value="${escapeHtml(cfg.jiraProxyUrl)}" placeholder="https://your-proxy.workers.dev" />
+          <div class="field-hint">${t('settings.jiraProxy.hint')}</div>
         </div>
       </div>
 
-      <div class="section-divider">${t('settings.io')}</div>
-      <div class="io-buttons">
-        <button class="btn" id="cfg-export">${t('settings.export')}</button>
-        <button class="btn" id="cfg-import">${t('settings.import')}</button>
-        <input type="file" id="cfg-import-file" accept=".json" hidden />
+      <div class="settings-tab-panel" data-panel="ai">
+        <div class="field">
+          <label>${t('settings.aiProvider')}</label>
+          <select id="cfg-ai-provider" class="cfg-select">
+            ${Object.entries(AI_PROVIDERS).map(([id, p]) =>
+              `<option value="${id}"${cfg.aiProvider === id ? ' selected' : ''}>${p.name}</option>`
+            ).join('')}
+          </select>
+        </div>
+        <div class="field">
+          <label>${t('settings.aiApiKey')}</label>
+          <input type="password" id="cfg-ai-key" value="${escapeHtml(cfg.aiApiKey || '')}" placeholder="..." />
+          <div class="field-hint"><span id="ai-key-hint"></span></div>
+        </div>
+        <div class="field" id="cfg-ai-model-field">
+          <label>${t('settings.aiModel')}</label>
+          <select id="cfg-ai-model" class="cfg-select"></select>
+        </div>
+        <div class="field" id="cfg-ai-custom-field" style="display:none">
+          <label>${t('settings.aiCustomUrl')}</label>
+          <input type="text" id="cfg-ai-custom-url" value="${escapeHtml(cfg.aiCustomUrl || '')}" placeholder="localhost:11434/v1" />
+          <div class="field-hint">${t('settings.aiCustomUrl.hint')}</div>
+        </div>
       </div>
-      <div class="io-feedback" id="cfg-io-feedback"></div>
 
-      <div class="section-divider">${t('settings.help.divider')}</div>
-      <button class="btn" id="cfg-help">${t('settings.help.button')}</button>
+      <div class="settings-tab-panel" data-panel="watchlist">
+        <div class="field">
+          <label>${t('settings.watchlistKeys')}</label>
+          <input type="text" id="cfg-watchlist-jira" value="${escapeHtml(jiraKeys.join(', '))}" placeholder="PROJ-123, PROJ-456" />
+        </div>
+        <div class="field">
+          <label>${t('settings.watchlistPRs')}</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn" id="cfg-view-watched-prs">${t('settings.viewWatchedPRs')}</button>
+            <button class="btn" id="cfg-pr-browser">${t('settings.browsePRs')}</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-tab-panel" data-panel="io">
+        <div class="io-buttons">
+          <button class="btn" id="cfg-export">${t('settings.export')}</button>
+          <button class="btn" id="cfg-import">${t('settings.import')}</button>
+          <input type="file" id="cfg-import-file" accept=".json" hidden />
+        </div>
+        <div class="io-feedback" id="cfg-io-feedback"></div>
+      </div>
+
+      <div class="settings-tab-panel" data-panel="help">
+        <div class="help-content">
+          <div class="help-section">
+            <h3>${t('help.github.title')}</h3>
+            <p>${t('help.github.token')}</p>
+            <p>${t('help.github.repos')}</p>
+            <p>${t('help.github.email')}</p>
+            <p>${t('help.github.username')}</p>
+          </div>
+          <div class="help-section">
+            <h3>${t('help.jira.title')}</h3>
+            <p>${t('help.jira.domain')}</p>
+            <p>${t('help.jira.credentials')}</p>
+            <p>${t('help.jira.jql')}</p>
+            <p>${t('help.jira.proxy')}</p>
+          </div>
+          <div class="help-section">
+            <h3>${t('help.watchlist.title')}</h3>
+            <p>${t('help.watchlist.jira')}</p>
+            <p>${t('help.watchlist.prs')}</p>
+          </div>
+          <div class="help-section">
+            <h3>${t('help.io.title')}</h3>
+            <p>${t('help.io.export')}</p>
+            <p>${t('help.io.import')}</p>
+          </div>
+        </div>
+      </div>
 
       <div class="modal-actions">
         <button class="btn btn-danger" id="cfg-cancel">${t('settings.cancel')}</button>
@@ -1149,6 +1187,16 @@ export function openSettings(onSave) {
   `;
   document.body.appendChild(overlay);
 
+  // ---- Settings tabs ----
+  overlay.querySelectorAll('.settings-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      overlay.querySelectorAll('.settings-tab').forEach((t2) => t2.classList.remove('active'));
+      overlay.querySelectorAll('.settings-tab-panel').forEach((p) => p.classList.remove('active'));
+      tab.classList.add('active');
+      overlay.querySelector(`[data-panel="${tab.dataset.tab}"]`).classList.add('active');
+    });
+  });
+
   // ---- AI settings dynamic behavior ----
   const aiProviderSelect = overlay.querySelector('#cfg-ai-provider');
   const aiKeyInput = overlay.querySelector('#cfg-ai-key');
@@ -1156,12 +1204,14 @@ export function openSettings(onSave) {
   const aiModelSelect = overlay.querySelector('#cfg-ai-model');
   const aiModelField = overlay.querySelector('#cfg-ai-model-field');
   const aiCustomField = overlay.querySelector('#cfg-ai-custom-field');
-  const aiCustomInput = overlay.querySelector('#cfg-ai-custom-url');
+  const aiApiKeys = { ...(cfg.aiApiKeys || {}) };
 
   function updateAIFields() {
     const providerId = aiProviderSelect.value;
     const provider = AI_PROVIDERS[providerId];
     if (!provider) return;
+
+    aiKeyInput.value = aiApiKeys[providerId] || '';
 
     if (provider.keyUrl) {
       aiKeyHint.innerHTML = `<a href="${provider.keyUrl}" target="_blank" rel="noopener">${provider.keyUrl}</a>`;
@@ -1173,14 +1223,13 @@ export function openSettings(onSave) {
       .map((m) => `<option value="${m.id}"${m.id === cfg.aiModel ? ' selected' : ''}>${m.name}</option>`)
       .join('');
 
-    if (providerId === 'custom') {
-      aiCustomField.style.display = '';
-      aiModelField.style.display = 'none';
-    } else {
-      aiCustomField.style.display = 'none';
-      aiModelField.style.display = '';
-    }
+    aiCustomField.style.display = providerId === 'custom' ? '' : 'none';
+    aiModelField.style.display = providerId === 'custom' ? 'none' : '';
   }
+
+  aiKeyInput.addEventListener('input', () => {
+    aiApiKeys[aiProviderSelect.value] = aiKeyInput.value.trim();
+  });
 
   aiProviderSelect.addEventListener('change', updateAIFields);
   updateAIFields();
@@ -1205,10 +1254,6 @@ export function openSettings(onSave) {
     openWatchedPRs();
   };
 
-  overlay.querySelector('#cfg-help').onclick = () => {
-    openHelp();
-  };
-
   overlay.querySelector('#cfg-cancel').onclick = () => overlay.remove();
   overlay.querySelector('#cfg-save').onclick = () => {
     const newCfg = {
@@ -1223,7 +1268,8 @@ export function openSettings(onSave) {
       jiraProxyUrl: document.getElementById('cfg-jira-proxy').value.trim(),
       aiProvider: document.getElementById('cfg-ai-provider').value,
       aiApiKey: document.getElementById('cfg-ai-key').value.trim(),
-      aiModel: document.getElementById('cfg-ai-model').value || getConfig().aiModel,
+      aiApiKeys: { ...aiApiKeys, [document.getElementById('cfg-ai-provider').value]: document.getElementById('cfg-ai-key').value.trim() },
+      aiModel: document.getElementById('cfg-ai-model')?.value || (document.getElementById('cfg-ai-provider').value === 'custom' ? '' : getConfig().aiModel),
       aiCustomUrl: document.getElementById('cfg-ai-custom-url')?.value.trim() || '',
     };
     setConfig(newCfg);

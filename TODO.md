@@ -56,6 +56,7 @@ PWA personal para monitorear PRs de GitHub y tickets de Jira. Actualmente funcio
 - [x] Cache de insights en localStorage (1h TTL)
 - [x] Traducciones EN/ES
 - [ ] Evaluar calidad de descripciones de PRs (las plantillas existentes tienen 200-300 chars pero no dicen nada útil)
+- [ ] Cargar modelos dinámicamente desde el provider (GET /models o listas hardcodeadas por provider)
 
 ### Notas
 - Deploy a Cloudflare Pages: pendiente hasta que el usuario lo solicite activamente

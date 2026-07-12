@@ -3,7 +3,7 @@ const EXPORT_VERSION = 2;
 const CATEGORIES = {
   github: { key: 'devdash_config_v1', fields: ['githubToken', 'githubEmail', 'githubUser', 'githubRepos'], label: 'GitHub' },
   jira: { key: 'devdash_config_v1', fields: ['jiraDomain', 'jiraEmail', 'jiraToken', 'jiraJql', 'jiraProxyUrl'], label: 'Jira' },
-  ai: { key: 'devdash_config_v1', fields: ['aiProvider', 'aiApiKey', 'aiModel', 'aiCustomUrl'], label: 'AI' },
+  ai: { key: 'devdash_config_v1', fields: ['aiProvider', 'aiApiKey', 'aiApiKeys', 'aiModel', 'aiCustomUrl'], label: 'AI' },
   watchlistJira: { key: 'devdash_watchlist_v1', filter: (list) => list.filter((i) => (i.type || 'jira') === 'jira'), label: 'Jira watchlist' },
   watchlistPRs: { key: 'devdash_watchlist_v1', filter: (list) => list.filter((i) => i.type === 'pr'), label: 'PR watchlist' },
   lang: { key: 'devdash_lang_v1', label: 'Language' },
@@ -77,7 +77,7 @@ export function collectCategories() {
   const result = {};
   for (const [id, cat] of Object.entries(CATEGORIES)) {
     if (cat.fields) {
-      result[id] = { label: cat.label, data: cat.fields.map((f) => `${f}: ${cfg[f] || ''}`).join('\n'), hasData: cat.fields.some((f) => cfg[f]) };
+      result[id] = { label: cat.label, data: cat.fields.map((f) => { const v = cfg[f]; return `${f}: ${v && typeof v === 'object' ? JSON.stringify(v) : v || ''}`; }).join('\n'), hasData: cat.fields.some((f) => { const v = cfg[f]; return v && typeof v === 'object' ? Object.keys(v).length > 0 : !!v; }) };
     } else if (cat.filter) {
       const items = cat.filter(watchlist);
       result[id] = { label: cat.label, data: items.map((i) => i.type === 'pr' ? `${i.owner}/${i.repo}#${i.number}` : i.key).join(', '), hasData: items.length > 0 };
@@ -178,7 +178,13 @@ export function getImportPreview(payload) {
     const fields = CATEGORIES.ai.fields;
     preview.ai = {
       label: 'AI',
-      items: fields.map((f) => ({ field: f, current: cfg[f] || '', incoming: payload._ai[f] || '', changed: (cfg[f] || '') !== (payload._ai[f] || '') })),
+      items: fields.map((f) => {
+        const cur = cfg[f];
+        const inc = payload._ai[f];
+        const curStr = cur && typeof cur === 'object' ? JSON.stringify(cur) : cur || '';
+        const incStr = inc && typeof inc === 'object' ? JSON.stringify(inc) : inc || '';
+        return { field: f, current: curStr, incoming: incStr, changed: curStr !== incStr };
+      }),
     };
   }
   if (payload._watchlistJira) {

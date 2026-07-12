@@ -61,6 +61,11 @@
   "time.daysAgo": "{n}d ago",
 
   "settings.title": "Settings",
+  "settings.tabGeneral": "General",
+  "settings.tabAI": "AI",
+  "settings.tabWatchlist": "Watchlist",
+  "settings.tabIO": "Import / Export",
+  "settings.tabHelp": "Help",
   "settings.github": "GitHub",
   "settings.jira": "Jira",
   "settings.watchlist": "Watchlist",
@@ -152,8 +157,8 @@
   "settings.aiApiKey": "API Key",
   "settings.aiApiKey.hint": "Your API key for the selected provider.",
   "settings.aiModel": "Model",
-  "settings.aiCustomUrl": "Custom API URL",
-  "settings.aiCustomUrl.hint": "Full base URL for the chat completions endpoint (e.g. https://your-api.com/v1).",
+  "settings.aiCustomUrl": "API URL",
+  "settings.aiCustomUrl.hint": "Base URL for chat completions. Cloud: https://your-api.com/v1 — Local: localhost:11434/v1",
 
   "theme.dark": "Dark",
   "theme.light": "Light",
