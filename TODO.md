@@ -59,12 +59,14 @@ PWA personal para monitorear PRs de GitHub y tickets de Jira. Actualmente funcio
 - [ ] Cargar modelos dinámicamente desde el provider (GET /models o listas hardcodeadas por provider)
 
 ### 5. Desktop app
-- [ ] Evaluar Electron vs Tauri vs Wails
-  - **Electron**: más fácil de arrancar, pesado (~150MB), Node.js
-  - **Tauri**: liviano (~5MB), usa webview del sistema, necesita Rust
-  - **Wails**: como Tauri pero con Go, más simple si no conocés Rust
-- [ ] Wrapper mínimo: cargar la PWA existente en un webview nativo
-- [ ] Acceso directo a filesystem (logs, configs) si se necesita
+- [x] Evaluar Electron vs Tauri vs Wails — ✅ Wails v2 (Go, sistema webview, ~7.8MB)
+  - **Electron**: 50-150MB, Node.js, consistent rendering, maduro. ❌ Overkill para wrapper de PWA
+  - **Tauri v2**: 3-15MB, Rust, iOS/Android, capability security. ❌ Requiere Rust, no instalado
+  - **Wails v2.13.0**: ~7.8MB, Go (ya instalado), bundle chico, startup <0.5s. ✅ Elegido
+- [x] Wrapper mínimo: PWA existente en webview nativo (Wails + plain template)
+- [x] Proyecto separado en `beaconator-desktop/` — no afecta la versión web
+- [x] Sin proxy de Jira (webview no tiene CORS)
+- [x] Enlaces externos abren en browser nativo vía `runtime.BrowserOpenURL`
 - [ ] Build y distribución (auto-update, installers)
 
 ### Notas

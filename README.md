@@ -138,3 +138,42 @@ Navegador
 | `Jira API 400` con CORS | Proxy no configurado | Verificá que la Proxy URL sea correcta |
 | `GitHub API 422` | Usuario o repo incorrecto | Verificá formato `owner/repo` sin URLs |
 | `NS_ERROR_INTERCEPTION_FAILED` | CORS de Jira | Necesitás el proxy (Paso 3b) |
+
+## OpenCode + Gentle AI Setup
+
+Script para configurar los modelos gratuitos de OpenCode Zen en los agentes SDD de Gentle AI.
+
+### Modelos asignados
+
+| Modelo | Agentes | Rol |
+|--------|---------|-----|
+| DeepSeek V4 Flash Free | orchestrator, apply, design, spec, tasks, fix-agent | Fases pesadas: coordinación, implementación, diseño |
+| MiMo-V2.5 Free | judges (A/B), reviewers (R1-R4, refuter) | Reasoning adversarial: reviews y judgment day |
+| Nemotron 3 Ultra Free | explore, propose, init, archive, verify, onboard | Fases ligeras: exploración, proposals, utilidades |
+
+### Requisitos
+
+- OpenCode instalado
+- Gentle AI instalado (agents en `opencode.json`)
+- OpenCode Zen conectado (`/connect` en TUI → seleccionar OpenCode Zen → pegar API key)
+
+### Uso
+
+```bash
+# Preview sin escribir
+node setup-opencode-models.js --dry-run
+
+# Aplicar configuración
+node setup-opencode-models.js
+```
+
+El script es idempotente — correrlo múltiples veces no rompe nada. Preserva prompts, tools, permisos y toda la config existente.
+
+### En otra compu
+
+```bash
+# 1. Instalar Gentle AI
+# 2. Conectar OpenCode Zen (/connect)
+# 3. Copiar setup-opencode-models.js y ejecutar:
+node setup-opencode-models.js
+```

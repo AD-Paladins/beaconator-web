@@ -1,0 +1,11 @@
+{
+  "servers": {
+    "engram": {
+      "args": [
+        "mcp",
+        "--tools=agent"
+      ],
+      "command": "/opt/homebrew/bin/engram"
+    }
+  }
+}
